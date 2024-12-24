@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Door 150 Solver</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-group-container {
+            display: flex;
+            flex-direction: row; /* Align input groups horizontally */
+            margin-bottom: 10px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin: 5px;
+            align-items: center;
+        }
+        .input-group input {
+            background-color: black;
+            color: white;
+            border: 0px solid white;
+            padding: 5px;
+            text-align: center;
+            width: 40px; /* Make input the same width as buttons */
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+        }
+        .input-group button {
+            background-color: black;
+            color: white;
+            border: 1px dotted rgba(255, 255, 255, 0.144);
+            padding: 5px;
+            height: 35px;
+            border-radius: 100%;
+            cursor: pointer;
+            width: 35px; /* Set button width to match input */
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+        }
+        .input-group button:hover {
+            background-color: gray;
+        }
+        .input-group .top-button {
+            margin-bottom: 2px;
+        }
+        .input-group .bottom-button {
+            margin-top: 2px;
+        }
+        .input-group .label {
+            width: 40px;  /* Same width as buttons and input */
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .result {
+            margin-top: 10px;
+        }
+        .shift-label {
+            margin-top: 5px;
+            width: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: white;
+        }
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Black background with opacity */
+            overflow: auto;
+            padding-top: 60px;
+            opacity: 0; /* Initially hidden */
+            transform: translateY(50px); /* Start position from below */
+            transition: opacity 0.5s ease, transform 0.5s ease; /* Transition effect */
+        }
+        .modal.show {
+            display: block; /* Show the modal */
+            opacity: 1; /* Fade in */
+            transform: translateY(0); /* Move upwards */
+        }
+        .modal-content {
+            background-color: #333;
+            color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .modal-header {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .modal-body {
+            font-size: 16px;
+        }
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: #ddd;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Question mark button */
+        .question-button {
+            background-color: black;
+            color: white;
+            border: 1px solid white;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="input-group-container">
+            <!-- Input group 1 -->
+            <div class="input-group">
+                <div class="label">Digit 1</div>
+                <button class="top-button" onclick="increment(0)">+</button>
+                <input type="text" id="input1" value="0" onchange="updateResult()" oninput="validateNumber(0)">
+                <button class="bottom-button" onclick="decrement(0)">-</button>
+            </div>
+            <!-- Input group 2 -->
+            <div class="input-group">
+                <div class="label">Digit 2</div>
+                <button class="top-button" onclick="increment(1)">+</button>
+                <input type="text" id="input2" value="0" onchange="updateResult()" oninput="validateNumber(1)">
+                <button class="bottom-button" onclick="decrement(1)">-</button>
+            </div>
+            <!-- Input group 3 -->
+            <div class="input-group">
+                <div class="label">Digit 3</div>
+                <button class="top-button" onclick="increment(2)">+</button>
+                <input type="text" id="input3" value="0" onchange="updateResult()" oninput="validateNumber(2)">
+                <button class="bottom-button" onclick="decrement(2)">-</button>
+            </div>
+        </div>
+
+        <!-- Input group 4 (with + and - buttons) -->
+        <div class="input-group">
+            <button class="top-button" onclick="increment4()">+</button>
+            <input type="text" id="input4" value="0" onchange="updateResult()" oninput="validateNumber4()">
+            <button class="bottom-button" onclick="decrement4()">-</button>
+        </div>
+
+        <!-- Shift label below the 4th input -->
+        <div class="shift-label">Shift</div>
+
+        <div class="result">
+            <p id="result"></p>
+        </div>
+
+        <!-- Question mark button -->
+        <button class="question-button" onclick="openModal()">?</button>
+    </div>
+
+    <!-- Modal -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header">Help</div>
+            <div class="modal-body">
+                <p>This is Ben's door 150 code solver.</p>
+                <p>The top 3 numbers should be set to what they are in the bottom left of your screen, and the shift should be set to what you can see on the sticky note. The buttons you should push will automatically populate below.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateResult() {
+            const num1 = parseInt(document.getElementById('input1').value) || 0;
+            const num2 = parseInt(document.getElementById('input2').value) || 0;
+            const num3 = parseInt(document.getElementById('input3').value) || 0;
+            const num4 = parseInt(document.getElementById('input4').value) || 0;
+
+            const result1 = (num1 + num4) % 10;
+            const result2 = (num2 + num4) % 10;
+            const result3 = (num3 + num4) % 10;
+
+            document.getElementById('result').textContent = `Press buttons ${result1}, ${result2}, and ${result3}`;
+        }
+
+        function increment(index) {
+            const inputId = `input${index + 1}`;
+            const input = document.getElementById(inputId);
+            let currentValue = (parseInt(input.value) || 0);
+            currentValue = (currentValue + 1) % 10;  // Implement rollover (0 to 9)
+            input.value = currentValue;
+            updateResult();
+        }
+
+        function decrement(index) {
+            const inputId = `input${index + 1}`;
+            const input = document.getElementById(inputId);
+            let currentValue = (parseInt(input.value) || 0);
+            currentValue = (currentValue - 1 + 10) % 10;  // Implement rollover (9 to 0)
+            input.value = currentValue;
+            updateResult();
+        }
+
+        function increment4() {
+            const input = document.getElementById('input4');
+            let currentValue = parseInt(input.value) || 0;
+            currentValue = (currentValue + 1) > 5 ? -5 : currentValue + 1;  // Rollover from 5 to -5
+            input.value = currentValue;
+            updateResult();
+        }
+
+        function decrement4() {
+            const input = document.getElementById('input4');
+            let currentValue = parseInt(input.value) || 0;
+            currentValue = (currentValue - 1) < -5 ? 5 : currentValue - 1;  // Rollover from -5 to 5
+            input.value = currentValue;
+            updateResult();
+        }
+
+        function validateNumber(index) {
+            const inputId = `input${index + 1}`;
+            const input = document.getElementById(inputId);
+            let value = input.value;
+
+            // Ensure the value is between 0 and 9
+            if (value === "" || value === "-") {
+                input.value = "0";  // Default to 0 if empty or invalid
+            } else {
+                value = parseInt(value);
+                if (isNaN(value) || value < 0) {
+                    input.value = "0";  // Reset to 0 if invalid
+                } else if (value > 9) {
+                    input.value = "9";  // Limit to 9 if greater than 9
+                }
+            }
+            updateResult();
+        }
+
+        function validateNumber4() {
+            const input = document.getElementById('input4');
+            let value = input.value;
+
+            // Ensure the value is between -5 and 5
+            if (value === "" || value === "-") {
+                input.value = "0";  // Default to 0 if empty or invalid
+            } else {
+                value = parseInt(value);
+                if (isNaN(value) || value < -5) {
+                    input.value = "-5";  // Reset to -5 if invalid
+                } else if (value > 5) {
+                    input.value = "5";  // Limit to 5 if greater than 5
+                }
+            }
+            updateResult();
+        }
+
+        // Modal functions
+        function openModal() {
+            document.getElementById("infoModal").classList.add("show");
+        }
+
+        function closeModal() {
+            document.getElementById("infoModal").classList.remove("show");
+        }
+    </script>
+</body>
+</html>
