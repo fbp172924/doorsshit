@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Door 150 Solver</title>
     <style>
-        #my{
-zoom: 290%;
-}
         body {
             background-color: black;
             color: white;
@@ -231,7 +228,7 @@ zoom: 290%;
         function increment4() {
             const input = document.getElementById('input4');
             let currentValue = parseInt(input.value) || 0;
-            currentValue = (currentValue + 1) > 5 ? -5 : currentValue + 1;  // Rollover from 5 to -5
+            currentValue = (currentValue + 1) > 5 ? -10 : currentValue + 1;  // Rollover from 5 to -10
             input.value = currentValue;
             updateResult();
         }
@@ -239,7 +236,7 @@ zoom: 290%;
         function decrement4() {
             const input = document.getElementById('input4');
             let currentValue = parseInt(input.value) || 0;
-            currentValue = (currentValue - 1) < -5 ? 5 : currentValue - 1;  // Rollover from -5 to 5
+            currentValue = (currentValue - 1) < -10 ? 5 : currentValue - 1;  // Rollover from -10 to 5
             input.value = currentValue;
             updateResult();
         }
@@ -267,15 +264,15 @@ zoom: 290%;
             const input = document.getElementById('input4');
             let value = input.value;
 
-            // Ensure the value is between -5 and 5
+            // Ensure the value is between -10 and 5
             if (value === "" || value === "-") {
                 input.value = "0";  // Default to 0 if empty or invalid
             } else {
                 value = parseInt(value);
-                if (isNaN(value) || value < -5) {
-                    input.value = "-5";  // Reset to -5 if invalid
+                if (isNaN(value) || value < -10) {
+                    input.value = "-10";  // Reset to -10 if invalid
                 } else if (value > 5) {
-                    input.value = "5";  // Limit to 5 if greater than 5
+                    input.value = "10";  // Limit to 5 if greater than 5
                 }
             }
             updateResult();
